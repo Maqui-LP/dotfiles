@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-"${HOME}"/.config}
+export XDG_CONFIG_HOME
+
+[[ "${PATH}" == *"${HOME}/.local/bin"* ]] || export PATH="${HOME}/.local/bin:${PATH}"
+
+# required for xfce settings to work
+xfsettingsd &
+
+# load X params required for dotfiles to work
+xrdb -I"${HOME}" -load ~/.Xresources &
+
+# load picom
+picom --config "${XDG_CONFIG_HOME}"/picom.conf &
+
+# TODO: load git notify pointing to dotfiles repo
+
+# restore last configured wallpaper
+dots-scripts wall-d -f -r &
+dots-scripts feh-blur --blur 10 -d &
+
+# open polybar
+"${XDG_CONFIG_HOME}"/polybar/launch &
